@@ -233,6 +233,7 @@ add_action( 'wp_ajax_request_code', 'wp_plugin_tutorial_request_code_callback' )
 
 /**
  * 워드프레스에서 rewrite 하도록 규칙을 설정합니다.
+ * 서버에서 rewrite가 허용되어야 합니다.
  */
 add_action( 'init', 'wp_plugin_tutorial_rewrite_rule', 10, 0);
 function wp_plugin_tutorial_rewrite_rule() {
@@ -267,6 +268,71 @@ function wp_plugin_tutorial_parse_request() {
 	if(!empty( $tutorial )) {
 		add_action( 'template_redirect', 'wp_plugin_tutorial_template_redirect_callback' );
 	}
+}
+
+/**
+ * 커스텀 포스트를 등록합니다.
+ */
+add_action( 'init', 'wp_plugin_tutorial_custom_post'  );
+function wp_plugin_tutorial_custom_post() {
+
+	/**
+	 * @link http://codex.wordpress.org/Function_Reference/register_post_type
+	 */
+	$labels = array(
+		'name'                   => _x( '*Plugin Tutorials*', 'post tutorial', 'wp_plugin_tutorial' ),  // 보통 복수의 이름. 전체 목록 화면 가장 상단에 출력.
+		'singular_name'          => _x( 'Plugin Tutorial', 'post singular', 'wp_plugin_tutorial' ),     // 단수 이름
+		'menu_name'              => _x( '[Tutorials]', 'admin menu', 'wp_plugin_tutorial' ),            // 메뉴에 나타날 텍스트
+		'name_admin_bar'         => _x( 'Tutorial', 'add new on admin bar', 'wp_plugin_tutorial' ),     // Add New 드롭다운 어드민 바에 나오는 내용
+		'add_new'                => _x( '[Add New]', 'tutorial', 'wp_plugin_tutorial' ),                // 새 아이템 추가 텍스트
+		'add_new_item'           => __( '/Add New/', 'wp_plugin_tutorial' ),                            // 새 아이템 추가 텍스트 (작성 화면에서 출력)
+		'new_item'               => __( 'New Tutorial', 'wp_plugin_tutorial' ),                         // 새 튜토리얼 추가
+		'all_items'              => __( 'All Tutorials', 'wp_plugin_tutorial' ),                        // 모든 아이템
+		'edit_item'              => __( 'Edit Tutorial', 'wp_plugin_tutorial' ),                        // 아이템 수정 (수정 화면에서 화면 상단에 출력)
+		'view_item'              => __( 'View Tutorial', 'wp_plugin_tutorial' ),                        // 아이템 조회 텍스트
+		'search_items'           => __( '!Search Tutorial', 'wp_plugin_tutorial' ),                     // 아이템 검색 텍스트
+		'not_found'              => __( 'No tutorial found ', 'wp_plugin_tutorial' ),                   // 찾지 못함 텍스트
+		'not_found_in_trash'     => __( 'No tutorial found in Trash', 'wp_plugin_tutorial' ),           // 휴지통에서 찾지 못함
+		'parent_item_colon'      => __( 'Parent Tutorial:', 'wp_plugin_tutorial' ),                     // 부모 페이지를 의미. 있을 경우에만.
+	);
+
+	$args = array(
+		'labels'                => $labels,
+		'description'           => 'tutorial custom post type',         // 설명
+		'public'                => TRUE,                                // 외부로 보이는 타입인지
+		'exclude_from_search'   => FALSE,                               // 검색 차단할지를 설정
+		'publicly_queryable'    => TRUE,                                // 이 타입을 넣은 쿼리를 UI에서 사용할 수 있는지 결정
+		'show_ui'               => TRUE,                                // 이 타입을 UI에서 볼 수 있는지 결정
+		'show_in_nav_menus'     => TRUE,                                // 네비게이션 메뉴에서 볼 수 있는지 결정
+		'show_in_menu'          => TRUE,                                // 어드민 메뉴를 보여줄지 결정
+		'show_in_admin_bar'     => TRUE,                                // 어드민 바에서 보여줄 지 결정
+		'query_var'             => TRUE,
+		'rewrite'               => array( 'slug' => 'tutorial' ),
+		'capability_type'       => 'post',
+		'has_archive'           => TRUE,
+		'hierarchical'          => FALSE,
+		'menu_position'         => NULL,
+		'supports'              => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ),
+		'menu_icon'             => NULL,                                // 메뉴 아이콘
+		//'capabilities'        => array(),
+		'register_meta_box_cb'  => 'wp_plugin_tutorial_meta_box_cb_callback',
+		'taxonomies'            => array( 'post_tag', 'category', ),
+	);
+
+	$obj = register_post_type( 'wpp_tutorial_type', $args );
+	if( is_wp_error( $obj ) ) {
+		echo $obj->get_error_message();
+	}
+}
+
+/**
+ * 메타 값을 저장하기 위해 액션을 추가합니다.
+ * 자세한 사항은 코덱스를 참조하기 바랍니다.
+ */
+add_action( 'save_post', 'wp_plugin_tutorial_save_post');
+function wp_plugin_tutorial_save_post( $post_id ) {
+
+	// save code see http://codex.wordpress.org/Function_Reference/add_meta_box#Examples
 }
 
 // 나머지 콜백 함수는 이 쪽에서 구현합니다.

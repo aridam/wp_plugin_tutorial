@@ -96,6 +96,7 @@ function wp_plugin_tutorial_greet_repeat_callback() {
 
 /**
  * 하위 메뉴 #2 AJAX 방식 폼 전송의 콜백 함수입니다.
+ * @see wp_plugin_tutorial_settings
  */
 function wp_plugin_tutorial_request_code_callback() {
 
@@ -113,14 +114,16 @@ function wp_plugin_tutorial_request_code_callback() {
 }
 
 /**
- *
+ * 튜토리얼 플러그인 설정 섹션 부분에서 콜백되는 함수입니다.
+ * @see wp_plugin_tutorial_settings
  */
 function wp_plugin_tutorial_section_callback( $args ) {
 	printf( '<p id="%s">%s</p>', $args['id'], '섹션의 콜백에 의해 출력된 텍스트입니다. 여기 p 태그의 id 속성을 체크하세요.' );
 }
 
 /**
- *
+ * 튜토리얼 플러그인 설정 필드 부분에서 콜백되는 함수입니다.
+ * @see wp_plugin_tutorial_parse_request
  */
 function wp_plugin_tutorial_field_callback( $args ) {
 	printf(
@@ -132,7 +135,39 @@ function wp_plugin_tutorial_field_callback( $args ) {
 	);
 }
 
+/**
+ * template_redirect 액션의 콜백입니다. 특정 주소를 입력할 때 특정 페이지를 로드하도록 합니다.
+ */
 function wp_plugin_tutorial_template_redirect_callback() {
 	include_once( 'include/custom-page.php' );
 	exit();
+}
+
+/**
+ * 커스텀 포스트를 작성할 때 메타 박스가 나타나도록 합니다.
+ * @see wp_plugin_tutorial_custom_post
+ */
+function wp_plugin_tutorial_meta_box_cb_callback() {
+	add_meta_box(
+		'tutorial_meta_1',
+		__( 'Tutorial Meta #1', 'wp_plugin_tutorial' ),
+		'wp_plugin_tutorial_meta_1_callback',
+		'wpp_tutorial_type',
+		'normal',
+		'default',
+		array( 'description' => 'meta value description' )
+	);
+}
+
+/**
+ * 메타 박스에 대한 콜백입니다.
+ * @see wp_plugin_tutorial_meta_box_cb_callback
+ */
+function wp_plugin_tutorial_meta_1_callback( $post, $metabox ) {
+
+	$fmt  = '<label for="wp_plugin_tutorial_meta_1">%s';
+	$fmt .= '<input type="text" id="wp_plugin_tutorial_meta_1" name="wp_plugin_tutorial_meta_1" value="%s" />';
+	$fmt .= '</label><span class="description">%s</span>';
+	wp_nonce_field( 'wp_plugin_tutorial_meta_1', 'wp_plugin_tutorial_meta_1_nonce' );
+	printf( $fmt, "Meta Value #1", esc_attr( get_post_meta( $post->ID, 'wp_plugin_tutorial_meta_1', TRUE ) ), $metabox['args']['description'] );
 }
