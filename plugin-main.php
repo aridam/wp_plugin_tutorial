@@ -316,7 +316,7 @@ function wp_plugin_tutorial_custom_post() {
 		'menu_icon'             => NULL,                                // 메뉴 아이콘
 		//'capabilities'        => array(),
 		'register_meta_box_cb'  => 'wp_plugin_tutorial_meta_box_cb_callback',
-		'taxonomies'            => array( 'post_tag', 'category', ),
+		'taxonomies'            => array( 'post_tag', 'category', ),    // 포스트의 기본 태그와 카테고리를 활용
 	);
 
 	$obj = register_post_type( 'wpp_tutorial_type', $args );
