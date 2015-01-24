@@ -9,7 +9,7 @@
  * Text Domain: wp_plugin_tutorial
  * License: PUBLIC
  *
- * @see http://codex.wordpress.org/Writing_a_Plugin#File_Headers
+ * @link http://codex.wordpress.org/Writing_a_Plugin#File_Headers
  */
 
 /**
@@ -25,7 +25,7 @@
  *   옵션값은 플러그인이 비활성화되면 해당 항목을 DB에서 아예 삭제하여 초기화합니다.
  * 플러그인은 특별하게 어떤 페이지를 생성합니다.
  *   이 페이지는 특별히 어디에 노출되어 있지 않아서, 직접 다른 페이지가 링크를 걸어 주든지, 아니면 사용자가 명시적으로 URL을 타이핑해야 합니다.
- *   페이지의 콘텐츠는 그냥 Hello, World를 출력하고 맙니다.
+ *   페이지는 단지 URL로 전달 받은 어떤 문자열을 출력해 보여줍니다.
  * 플러그인은 커스텀 포스트 타입을 하나 생성합니다.
  *   이 커스텀 포스트 타입은 기본 포스트처럼 대시보드에서 작성 가능합니다.
  *   몇몇 메타 필드들이 표시됩니다.
@@ -53,7 +53,7 @@ function wp_plugin_tutorial_on_activated() {
 
 /**
  * 플러그인이 비활성화 될 때의 액션입니다.
- * @see http://codex.wordpress.org/Function_Reference/register_deactivation_hook
+ * @link http://codex.wordpress.org/Function_Reference/register_deactivation_hook
  */
 register_deactivation_hook( $main_file, 'wp_plugin_tutorial_on_deactivated' );
 
@@ -75,7 +75,7 @@ function wp_plugin_tutorial_on_deactivated() {
 
 /**
  * 플러그인이 완전히 삭제될 때의 액션입니다.
- * @see http://codex.wordpress.org/Function_Reference/register_uninstall_hook
+ * @link http://codex.wordpress.org/Function_Reference/register_uninstall_hook
  */
 register_uninstall_hook( $main_file, 'wp_plugin_tutorial_on_uninstall' );
 
@@ -88,7 +88,7 @@ function wp_plugin_tutorial_on_uninstall() {
 
 /**
  * 플러그인의 메뉴를 삽입합니다. 옵션 페이지를 삽입합니다.
- * @see http://codex.wordpress.org/Plugin_API/Action_Reference/admin_menu
+ * @link http://codex.wordpress.org/Plugin_API/Action_Reference/admin_menu
  */
 add_action( 'admin_menu', 'wp_plugin_tutorial_add_admin_menu' );
 
@@ -186,7 +186,7 @@ function wp_plugin_tutorial_settings() {
 	 */
 	add_settings_section(
 		'wp_plugin_tutorial_section',                                           // id
-		__( 'Tutorial Plugin Section', 'wp_plugin_tutorial_settings' ),         // 섹션 제목
+		__( 'Tutorial Plugin Section', 'wp_plugin_tutorial' ),                  // 섹션 제목
 		'wp_plugin_tutorial_section_callback',                                  // 콜백
 		'wp_plugin_tutorial_option'                                             // 이 섹션이 보여질 페이지 슬러그
 	);
@@ -197,7 +197,7 @@ function wp_plugin_tutorial_settings() {
 	 */
 	add_settings_field(
 		'wp_plugin_tutorial_field',                                             // id
-		__( 'Tutorial Plugin Field', 'wp_plugin_tutorial_settings' ),           // 필드 제목
+		__( 'Tutorial Plugin Field', 'wp_plugin_tutorial' ),                    // 필드 제목
 		'wp_plugin_tutorial_field_callback',                                    // 콜백
 		'wp_plugin_tutorial_option',                                            // 이 필드가 속한 페이지 슬러그
 		'wp_plugin_tutorial_section',                                           // 이 필드가 속한 섹션 id
@@ -216,6 +216,12 @@ function wp_plugin_tutorial_settings() {
  */
 add_action( 'plugins_loaded', 'wp_plugin_tutorial_localize' );
 function wp_plugin_tutorial_localize() {
+  // @link https://codex.wordpress.org/Function_Reference/load_plugin_textdomain
+  load_plugin_textdomain(
+    'wp_plugin_tutorial',                              // textdomain
+    FALSE,                                             // deprecated
+    dirname( plugin_basename( __FILE__ ) ) . '/lang'   // plugin_rel_path
+  );
 }
 
 /**

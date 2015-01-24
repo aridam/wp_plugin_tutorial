@@ -1,3 +1,3 @@
 <div>
-	<p>Hello, World!</p>
+	<p><?php _e( 'Hello, World!', 'wp_plugin_tutorial' ); ?></p>
 </div>

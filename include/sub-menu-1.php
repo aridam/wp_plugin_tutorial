@@ -6,6 +6,11 @@ $greeter = get_option( 'wp_plugin_tutorial_option_name' );
 
 ?>
 <div class="wrap">
+  <?php 
+  /**
+   * @link http://codex.wordpress.org/Function_Reference/admin_url
+   */
+  ?>
 	<form class="form-wrap" id="form" name="form" method="POST" action="<?php echo admin_url( 'admin-post.php' ); ?>">
 		Greeter: <?php echo $greeter; ?><br/>
 		<label for="greet">Greet: <input type="text" id="greet" name="greet" value="hello" /></label>
