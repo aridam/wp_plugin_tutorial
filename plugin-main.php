@@ -44,6 +44,10 @@ register_activation_hook( $main_file, 'wp_plugin_tutorial_on_activated' );
  */
 function wp_plugin_tutorial_on_activated() {
 
+	// 플러그인 활성화 때 필요한 rewrite 규칙을 설정해둡니다.
+	wp_plugin_tutorial_rewrite_rule();
+	flush_rewrite_rules();
+
 	/**
 	 * @link http://codex.wordpress.org/Function_Reference/update_option
 	 * @link http://codex.wordpress.org/Function_Reference/get_currentuserinfo
@@ -61,6 +65,9 @@ register_deactivation_hook( $main_file, 'wp_plugin_tutorial_on_deactivated' );
  * register_deactivation_hook callback
  */
 function wp_plugin_tutorial_on_deactivated() {
+
+	// 플러그인 비활성화 때 더 이상 사용하지 않을 우리의 rewrite 규칙은 삭제합니다.
+	flush_rewrite_rules();
 
 	/**
 	 * @link http://codex.wordpress.org/Function_Reference/get_option
@@ -112,8 +119,8 @@ function wp_plugin_tutorial_add_admin_menu() {
 	 * @link http://codex.wordpress.org/Function_Reference/add_menu_page
 	 */
 	add_menu_page(
-		__('WordPress Plugin Tutorial', 'wp_plugin_tutorial' ),     // 웹브라우저 상단에 보일 문자 (<title> 태그)
-		__('WordPress Plugin Tutorial', 'wp_plugin_tutorial' ),     // 메뉴 페이지에 보일 문자
+		__('WPT', 'wp_plugin_tutorial' ),     // 웹브라우저 상단에 보일 문자 (<title> 태그)
+		__('WPT', 'wp_plugin_tutorial' ),     // 메뉴 페이지에 보일 문자
 		'manage_options',                                           // 플러그인 접근 권한
 		'wp_plugin_tutorial_main_menu',                             // 메뉴 슬러그
 		'wp_plugin_tutorial_main_menu_callback',                    // 콜백 함수
@@ -270,7 +277,7 @@ function wp_plugin_tutorial_parse_request() {
 
 	global $wp;
 
-	$tutorial = $wp->query_vars['tutorial'];
+	$tutorial = isset( $wp->query_vars['tutorial'] ) ? $wp->query_vars['tutorial'] : '' ;
 	if(!empty( $tutorial )) {
 		add_action( 'template_redirect', 'wp_plugin_tutorial_template_redirect_callback' );
 	}
@@ -306,26 +313,13 @@ function wp_plugin_tutorial_custom_post() {
 		'labels'                => $labels,
 		'description'           => 'tutorial custom post type',         // 설명
 		'public'                => TRUE,                                // 외부로 보이는 타입인지
-		'exclude_from_search'   => FALSE,                               // 검색 차단할지를 설정
-		'publicly_queryable'    => TRUE,                                // 이 타입을 넣은 쿼리를 UI에서 사용할 수 있는지 결정
 		'show_ui'               => TRUE,                                // 이 타입을 UI에서 볼 수 있는지 결정
-		'show_in_nav_menus'     => TRUE,                                // 네비게이션 메뉴에서 볼 수 있는지 결정
-		'show_in_menu'          => TRUE,                                // 어드민 메뉴를 보여줄지 결정
-		'show_in_admin_bar'     => TRUE,                                // 어드민 바에서 보여줄 지 결정
-		'query_var'             => TRUE,
-		'rewrite'               => array( 'slug' => 'tutorial' ),
-		'capability_type'       => 'post',
-		'has_archive'           => TRUE,
 		'hierarchical'          => FALSE,
-		'menu_position'         => NULL,
 		'supports'              => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' ),
-		'menu_icon'             => NULL,                                // 메뉴 아이콘
-		//'capabilities'        => array(),
 		'register_meta_box_cb'  => 'wp_plugin_tutorial_meta_box_cb_callback',
-		'taxonomies'            => array( 'post_tag', 'category', ),    // 포스트의 기본 태그와 카테고리를 활용
 	);
 
-	$obj = register_post_type( 'wpp_tutorial_type', $args );
+	$obj = register_post_type( 'wp_tutorial_type', $args );
 	if( is_wp_error( $obj ) ) {
 		echo $obj->get_error_message();
 	}
