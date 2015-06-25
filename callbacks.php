@@ -152,7 +152,7 @@ function wp_plugin_tutorial_meta_box_cb_callback() {
 		'tutorial_meta_1',
 		__( 'Tutorial Meta #1', 'wp_plugin_tutorial' ),
 		'wp_plugin_tutorial_meta_1_callback',
-		'wpp_tutorial_type',
+		'wp_tutorial_type',
 		'normal',
 		'default',
 		array( 'description' => 'meta value description' )
